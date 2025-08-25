@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Advisor</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Career Advisor</h1>
+            <p>Discover your perfect career path with personalized recommendations</p>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2 class="card-title">
+                    <div class="icon"></div>
+                    Personal Profile
+                </h2>
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="education">Education Level</label>
+                        <select id="education">
+                            <option value="">Select education level</option>
+                            <option value="high-school">High School</option>
+                            <option value="bachelor">Bachelor's Degree</option>
+                            <option value="master">Master's Degree</option>
+                            <option value="phd">PhD</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="experience">Years of Experience</label>
+                        <select id="experience">
+                            <option value="">Select experience</option>
+                            <option value="0">0 years (Fresh Graduate)</option>
+                            <option value="1-2">1-2 years</option>
+                            <option value="3-5">3-5 years</option>
+                            <option value="6-10">6-10 years</option>
+                            <option value="10+">10+ years</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="interests">Career Interests</label>
+                        <textarea id="interests" rows="3" placeholder="Describe what you're passionate about..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <div class="icon"></div>
+                    Skills Mapping
+                </h2>
+                
+                <div class="form-group">
+                    <label for="skillInput">Add Your Skills</label>
+                    <input type="text" id="skillInput" placeholder="Type a skill and press Enter">
+                </div>
+
+                <div class="skills-container" id="skillsContainer">
+                    <!-- Skills will be added here dynamically -->
+                </div>
+
+                <div class="form-group" style="margin-top: 30px;">
+                    <label>Skill Categories</label>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;">
+                        <button type="button" class="btn" onclick="addSampleSkills('technical')">Technical</button>
+                        <button type="button" class="btn" onclick="addSampleSkills('creative')">Creative</button>
+                        <button type="button" class="btn" onclick="addSampleSkills('leadership')">Leadership</button>
+                        <button type="button" class="btn" onclick="addSampleSkills('communication')">Communication</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn" onclick="generateRecommendations()" style="padding: 16px 32px; font-size: 1.1rem;">
+                🎯 Get Career Recommendations
+            </button>
+        </div>
+
+        <div id="resultsSection" class="results-section hidden">
+            <h2 style="margin-bottom: 20px; color: #2d3748;">📊 Your Career Analysis</h2>
+            
+            <div id="loadingSpinner" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Analyzing your profile and generating recommendations...</p>
+            </div>
+
+            <div id="recommendationsContent" class="hidden">
+                <div class="career-recommendations" id="careerRecommendations">
+                    <!-- Career recommendations will be added here -->
+                </div>
+
+                <div class="market-trends">
+                    <h3 style="margin-bottom: 15px; color: #2d3748;">📈 Job Market Insights</h3>
+                    <div id="marketTrends">
+                        <!-- Market trends will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
