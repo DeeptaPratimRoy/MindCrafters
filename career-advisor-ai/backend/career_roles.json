@@ -1,0 +1,92 @@
+[
+  {
+    "role": "Data Scientist",
+    "skills_required": [
+      "Python",
+      "SQL",
+      "Statistics",
+      "Machine Learning",
+      "Data Visualization",
+      "Pandas",
+      "NumPy",
+      "Deep Learning",
+      "Problem Solving"
+    ],
+    "description": "Analyze data, build predictive models, and derive insights using machine learning and statistics."
+  },
+  {
+    "role": "Software Developer",
+    "skills_required": [
+      "Java",
+      "Python",
+      "C++",
+      "Data Structures",
+      "Algorithms",
+      "Git",
+      "Databases",
+      "Problem Solving",
+      "APIs"
+    ],
+    "description": "Develop, test, and maintain software applications across different platforms."
+  },
+  {
+    "role": "Web Developer",
+    "skills_required": [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Node.js",
+      "Databases",
+      "REST APIs",
+      "Git",
+      "UI/UX Design"
+    ],
+    "description": "Design and build user-friendly websites and web applications."
+  },
+  {
+    "role": "Cybersecurity Analyst",
+    "skills_required": [
+      "Networking",
+      "Linux",
+      "Firewalls",
+      "Ethical Hacking",
+      "Security Tools",
+      "Incident Response",
+      "Risk Analysis",
+      "Cryptography",
+      "SIEM"
+    ],
+    "description": "Protect systems and networks from security breaches and respond to cyber threats."
+  },
+  {
+    "role": "Product Manager",
+    "skills_required": [
+      "Business Analysis",
+      "Communication",
+      "Leadership",
+      "Agile Methodology",
+      "Market Research",
+      "Roadmapping",
+      "Stakeholder Management",
+      "Problem Solving",
+      "Data Analysis"
+    ],
+    "description": "Oversee product development from idea to launch, aligning business, tech, and user needs."
+  },
+  {
+    "role": "AI/ML Engineer",
+    "skills_required": [
+      "Python",
+      "TensorFlow",
+      "PyTorch",
+      "Machine Learning",
+      "Deep Learning",
+      "MLOps",
+      "Cloud Platforms",
+      "Data Engineering",
+      "Model Deployment"
+    ],
+    "description": "Design and deploy AI/ML models for solving real-world problems at scale."
+  }
+]
