@@ -1,0 +1,188 @@
+
+import React, { useState, useEffect, useCallback } from "react";
+import { Opportunity, User } from "@/entities/all";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Briefcase,
+  Bookmark,
+  ExternalLink,
+  Search,
+  Filter,
+  MapPin,
+  Clock,
+} from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function Opportunities() {
+  const [user, setUser] = useState(null);
+  const [allOpps, setAllOpps] = useState([]);
+  const [filteredOpps, setFilteredOpps] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({ type: "all", location: "all" });
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const applyFilters = useCallback(() => {
+    let tempOpps = [...allOpps];
+    if (searchTerm) {
+      tempOpps = tempOpps.filter(
+        (o) =>
+          o.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          o.company.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    if (filters.type !== "all") {
+      tempOpps = tempOpps.filter((o) => o.type === filters.type);
+    }
+    if (filters.location !== "all") {
+      tempOpps = tempOpps.filter((o) => o.location.toLowerCase().includes(filters.location.toLowerCase()));
+    }
+    setFilteredOpps(tempOpps);
+  }, [allOpps, searchTerm, filters]); // Dependencies for useCallback
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]); // Now depends on the memoized applyFilters
+
+  const loadData = async () => {
+    setIsLoading(true);
+    try {
+      const [currentUser, opportunities] = await Promise.all([
+        User.me(),
+        Opportunity.list("-created_date"),
+      ]);
+      setUser(currentUser);
+      setAllOpps(opportunities);
+      // No need to setFilteredOpps here directly, as useEffect will call applyFilters after allOpps updates
+    } catch (error) {
+      console.error("Error loading opportunities:", error);
+    }
+    setIsLoading(false);
+  };
+
+  const handleFilterChange = (type, value) => {
+    setFilters((prev) => ({ ...prev, [type]: value }));
+  };
+
+  const toggleSave = async (oppId) => {
+    const isSaved = user.saved_opportunities?.includes(oppId);
+    const newSavedOpps = isSaved
+      ? user.saved_opportunities.filter((id) => id !== oppId)
+      : [...(user.saved_opportunities || []), oppId];
+    
+    const updatedUser = { ...user, saved_opportunities: newSavedOpps };
+    setUser(updatedUser);
+    await User.updateMyUserData({ saved_opportunities: newSavedOpps });
+  };
+
+  const types = [...new Set(allOpps.map(o => o.type))];
+  const locations = [...new Set(allOpps.map(o => o.location))]; // Dynamically get all unique locations
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 flex items-center gap-3">
+            <Briefcase className="w-8 h-8 text-blue-600" />
+            Opportunity Bridge
+          </h1>
+          <p className="text-slate-600 text-lg">
+            Find curated internships, projects, and gigs to build your career.
+          </p>
+        </div>
+
+        <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input placeholder="Search opportunities..." className="pl-10" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            </div>
+            <Select onValueChange={(value) => handleFilterChange("type", value)} defaultValue="all" value={filters.type}>
+              <SelectTrigger><SelectValue placeholder="Filter by type" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                {types.map(t => <SelectItem key={t} value={t} className="capitalize">{t}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select onValueChange={(value) => handleFilterChange("location", value)} defaultValue="all" value={filters.location}>
+              <SelectTrigger><SelectValue placeholder="Filter by location" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Locations</SelectItem>
+                {locations.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+
+        {isLoading ? (
+          <p className="text-center">Loading opportunities...</p>
+        ) : (
+          <div className="space-y-6">
+            {filteredOpps.map((opp, index) => (
+              <motion.div
+                key={opp.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Card className="border-0 shadow-lg bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
+                  <CardContent className="p-6">
+                    <div className="flex flex-col sm:flex-row gap-6">
+                      <div className="flex-grow">
+                        <div className="flex justify-between items-start mb-2">
+                          <div>
+                            <Badge className="bg-blue-100 text-blue-800 mb-2 capitalize">{opp.type}</Badge>
+                            <h3 className="text-xl font-bold text-slate-900">{opp.title}</h3>
+                            <p className="text-slate-600 font-medium">{opp.company}</p>
+                          </div>
+                          <Button variant="ghost" size="icon" onClick={() => toggleSave(opp.id)}>
+                            <Bookmark className={`w-5 h-5 transition-colors ${user?.saved_opportunities?.includes(opp.id) ? "fill-yellow-400 text-yellow-500" : "text-slate-400"}`} />
+                          </Button>
+                        </div>
+                        <p className="text-sm text-slate-600 mb-4 line-clamp-2">{opp.description}</p>
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {opp.required_skills.map(skill => <Badge key={skill} variant="outline">{skill}</Badge>)}
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0 sm:w-48 sm:text-right space-y-3">
+                        <div className="flex sm:justify-end items-center gap-2">
+                          <MapPin className="w-4 h-4 text-slate-500" />
+                          <span className="text-sm text-slate-600">{opp.location}</span>
+                        </div>
+                        <div className="flex sm:justify-end items-center gap-2">
+                          <Clock className="w-4 h-4 text-slate-500" />
+                          <span className="text-sm text-slate-600">Apply by {new Date(opp.deadline).toLocaleDateString()}</span>
+                        </div>
+                        <Button asChild className="w-full">
+                          <a href={opp.url} target="_blank" rel="noopener noreferrer">
+                            Apply Now <ExternalLink className="w-4 h-4 ml-2" />
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+            {filteredOpps.length === 0 && !isLoading && (
+              <p className="text-center text-slate-600 py-12">No opportunities match your search.</p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

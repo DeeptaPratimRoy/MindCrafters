@@ -1,0 +1,249 @@
+import React, { useState, useEffect } from "react";
+import { User } from "@/entities/User";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  User as UserIcon,
+  Save,
+  GraduationCap,
+  Brain,
+  Target,
+  FileText,
+  Upload,
+  Plus,
+  X,
+  CheckCircle,
+  Loader2,
+} from "lucide-react";
+import { UploadFile } from "@/integrations/Core";
+
+export default function Profile() {
+  const [user, setUser] = useState(null);
+  const [formData, setFormData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [skillInput, setSkillInput] = useState("");
+  const [careerInput, setCareerInput] = useState("");
+
+  useEffect(() => {
+    loadUser();
+  }, []);
+
+  const loadUser = async () => {
+    setIsLoading(true);
+    try {
+      const currentUser = await User.me();
+      setUser(currentUser);
+      setFormData(currentUser);
+    } catch (error) {
+      console.error("Error loading user profile:", error);
+    }
+    setIsLoading(false);
+  };
+  
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      await User.updateMyUserData(formData);
+      loadUser();
+    } catch (error) {
+      console.error("Error saving profile:", error);
+    }
+    setIsSaving(false);
+  };
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file || file.type !== "application/pdf") return;
+    setUploading(true);
+    const { file_url } = await UploadFile({ file });
+    handleInputChange("resume_url", file_url);
+    setUploading(false);
+  };
+
+  const addSkill = () => {
+    if (skillInput && !formData.current_skills.find(s => s.name === skillInput)) {
+      const newSkills = [...formData.current_skills, { name: skillInput, level: 5 }];
+      handleInputChange("current_skills", newSkills);
+      setSkillInput("");
+    }
+  };
+
+  const removeSkill = (skillName) => {
+    const newSkills = formData.current_skills.filter(s => s.name !== skillName);
+    handleInputChange("current_skills", newSkills);
+  };
+  
+  const addCareer = () => {
+    if (careerInput && !formData.target_careers.includes(careerInput)) {
+      const newCareers = [...formData.target_careers, careerInput];
+      handleInputChange("target_careers", newCareers);
+      setCareerInput("");
+    }
+  };
+
+  const removeCareer = (careerName) => {
+    const newCareers = formData.target_careers.filter(c => c !== careerName);
+    handleInputChange("target_careers", newCareers);
+  };
+
+  if (isLoading || !formData) {
+    return <div className="p-6 text-center">Loading your profile...</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2 flex items-center gap-3">
+              <UserIcon className="w-8 h-8 text-blue-600" />
+              Your Profile
+            </h1>
+            <p className="text-slate-600 text-lg">
+              Manage your personal information, skills, and career goals.
+            </p>
+          </div>
+          <Button onClick={handleSave} disabled={isSaving}>
+            {isSaving ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
+            Save Changes
+          </Button>
+        </div>
+
+        <Tabs defaultValue="personal" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="personal"><UserIcon className="w-4 h-4 mr-2" />Personal</TabsTrigger>
+            <TabsTrigger value="education"><GraduationCap className="w-4 h-4 mr-2" />Education</TabsTrigger>
+            <TabsTrigger value="skills"><Brain className="w-4 h-4 mr-2" />Skills</TabsTrigger>
+            <TabsTrigger value="goals"><Target className="w-4 h-4 mr-2" />Goals</TabsTrigger>
+          </TabsList>
+          
+          <Card className="mt-4 border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <CardContent className="pt-6">
+              <TabsContent value="personal">
+                <div className="space-y-4">
+                  <div>
+                    <label className="font-medium">Full Name</label>
+                    <Input value={formData.full_name} onChange={(e) => handleInputChange("full_name", e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="font-medium">Email</label>
+                    <Input value={formData.email} disabled />
+                  </div>
+                  <div>
+                    <label className="font-medium">Bio</label>
+                    <Textarea value={formData.bio} onChange={(e) => handleInputChange("bio", e.target.value)} rows={4} />
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="education">
+                <div className="space-y-4">
+                  <div>
+                    <label className="font-medium">Education Stage</label>
+                    <Select value={formData.education_stage} onValueChange={(v) => handleInputChange("education_stage", v)}>
+                      <SelectTrigger><SelectValue/></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="high_school">High School</SelectItem>
+                        <SelectItem value="undergraduate">Undergraduate</SelectItem>
+                        <SelectItem value="graduate">Graduate</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="font-medium">Graduation Year</label>
+                    <Input type="number" value={formData.graduation_year} onChange={(e) => handleInputChange("graduation_year", e.target.value)} />
+                  </div>
+                  <div>
+                    <label className="font-medium">Resume (PDF)</label>
+                    <div className="border p-4 rounded-lg flex items-center justify-between">
+                      {formData.resume_url ? (
+                        <a href={formData.resume_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">View Current Resume</a>
+                      ) : "No resume uploaded."}
+                      <Button variant="outline" onClick={() => document.getElementById('resume-upload-profile').click()} disabled={uploading}>
+                        {uploading ? <Loader2 className="w-4 h-4 animate-spin"/> : <Upload className="w-4 h-4"/>}
+                      </Button>
+                      <input id="resume-upload-profile" type="file" accept=".pdf" className="hidden" onChange={handleFileUpload}/>
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="skills">
+                <div className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input placeholder="Add a new skill" value={skillInput} onChange={e => setSkillInput(e.target.value)} />
+                    <Button onClick={addSkill}><Plus/></Button>
+                  </div>
+                  <div className="space-y-2">
+                    {formData.current_skills.map(skill => (
+                      <div key={skill.name} className="flex items-center gap-4 p-2 bg-slate-50 rounded-lg">
+                        <span className="flex-grow font-medium">{skill.name}</span>
+                        <Select value={skill.level.toString()} onValueChange={level => handleInputChange("current_skills", formData.current_skills.map(s => s.name === skill.name ? {...s, level: parseInt(level)} : s))}>
+                          <SelectTrigger className="w-24"><SelectValue/></SelectTrigger>
+                          <SelectContent>{[...Array(10)].map((_, i) => <SelectItem key={i+1} value={(i+1).toString()}>{i+1}/10</SelectItem>)}</SelectContent>
+                        </Select>
+                        <Button variant="ghost" size="icon" onClick={() => removeSkill(skill.name)}><X className="w-4 h-4 text-red-500"/></Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+              <TabsContent value="goals">
+                <div className="space-y-4">
+                  <div>
+                    <label className="font-medium">Target Careers</label>
+                     <div className="flex gap-2">
+                      <Input placeholder="Add a career goal" value={careerInput} onChange={e => setCareerInput(e.target.value)} />
+                      <Button onClick={addCareer}><Plus/></Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {formData.target_careers.map(career => (
+                        <Badge key={career} variant="outline" className="p-2">
+                          {career}
+                          <button onClick={() => removeCareer(career)} className="ml-2"><X className="w-3 h-3"/></button>
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                   <div>
+                    <label className="font-medium">Primary Interests</label>
+                    <p className="text-sm text-slate-500 mb-2">Select from predefined interests. (For custom interests, a different input method would be needed).</p>
+                     <div className="flex flex-wrap gap-2">
+                      {["Technology", "Business", "Design", "Marketing", "Data Science", "Healthcare"].map(interest => (
+                         <Badge key={interest} 
+                                variant={formData.interests.includes(interest) ? "default" : "outline"}
+                                className="cursor-pointer"
+                                onClick={() => handleInputChange("interests", formData.interests.includes(interest) ? formData.interests.filter(i => i !== interest) : [...formData.interests, interest])}>
+                           {interest}
+                         </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </CardContent>
+          </Card>
+        </Tabs>
+      </div>
+    </div>
+  );
+}

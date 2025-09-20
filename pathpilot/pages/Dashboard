@@ -1,0 +1,262 @@
+import React, { useState, useEffect } from "react";
+import { User, CareerPath, Opportunity, TrendingData } from "@/entities/all";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { 
+  ArrowRight, 
+  TrendingUp, 
+  Users, 
+  Briefcase, 
+  Star,
+  MapPin,
+  Brain,
+  Award,
+  Target,
+  CheckCircle,
+  Clock
+} from "lucide-react";
+
+import OnboardingFlow from "../components/dashboard/OnboardingFlow";
+import WelcomeHeader from "../components/dashboard/WelcomeHeader";
+import QuickStats from "../components/dashboard/QuickStats";
+import RecentActivity from "../components/dashboard/RecentActivity";
+
+export default function Dashboard() {
+  const [user, setUser] = useState(null);
+  const [careerPaths, setCareerPaths] = useState([]);
+  const [opportunities, setOpportunities] = useState([]);
+  const [trendingSkills, setTrendingSkills] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboardData();
+  }, []);
+
+  const loadDashboardData = async () => {
+    try {
+      const [currentUser, paths, opps, trending] = await Promise.all([
+        User.me(),
+        CareerPath.list("-future_proof_score", 6),
+        Opportunity.list("-created_date", 5),
+        TrendingData.filter({ type: "skill" }, "-growth_percentage", 8)
+      ]);
+      
+      setUser(currentUser);
+      setCareerPaths(paths);
+      setOpportunities(opps);
+      setTrendingSkills(trending);
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+    }
+    setIsLoading(false);
+  };
+
+  const handleOnboardingComplete = async (data) => {
+    await User.updateMyUserData({ ...data, onboarding_completed: true });
+    loadDashboardData();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg mx-auto mb-4 flex items-center justify-center">
+            <MapPin className="w-5 h-5 text-white animate-pulse" />
+          </div>
+          <p className="text-slate-600">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user?.onboarding_completed) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        <WelcomeHeader user={user} />
+
+        <QuickStats 
+          totalSkills={user?.current_skills?.length || 0}
+          profileScore={85}
+          opportunities={opportunities.length}
+          careerPaths={careerPaths.length}
+        />
+
+        {/* Main Content Grid */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          
+          {/* Left Column - Career Paths */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Recommended Career Paths */}
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-bold text-slate-900 flex items-center gap-3">
+                    <Target className="w-6 h-6 text-blue-600" />
+                    Recommended Career Paths
+                  </CardTitle>
+                  <Link to={createPageUrl("Careers")}>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      View All <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {careerPaths.slice(0, 3).map((path) => (
+                  <div key={path.id} className="p-4 border border-slate-200 rounded-xl hover:shadow-md transition-all duration-200 cursor-pointer">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <h3 className="font-semibold text-slate-900 mb-1">{path.title}</h3>
+                        <p className="text-slate-600 text-sm line-clamp-2">{path.description}</p>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800 border-green-200">
+                        {path.future_proof_score}% Future-Proof
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex gap-2">
+                        {path.required_skills?.slice(0, 3).map((skill, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
+                            {skill}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="text-sm text-slate-500">
+                        ${path.salary_range?.min}k - ${path.salary_range?.max}k
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Recent Opportunities */}
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-bold text-slate-900 flex items-center gap-3">
+                    <Briefcase className="w-6 h-6 text-blue-600" />
+                    Latest Opportunities
+                  </CardTitle>
+                  <Link to={createPageUrl("Opportunities")}>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      View All <ArrowRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {opportunities.map((opportunity) => (
+                  <div key={opportunity.id} className="flex items-start gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors duration-200">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                      <Briefcase className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-medium text-slate-900 truncate">{opportunity.title}</h4>
+                      <p className="text-slate-600 text-sm">{opportunity.company}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">
+                          {opportunity.type}
+                        </Badge>
+                        {opportunity.location && (
+                          <span className="text-xs text-slate-500">{opportunity.location}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Clock className="w-4 h-4 text-slate-400 mx-auto mb-1" />
+                      <p className="text-xs text-slate-500">
+                        {opportunity.deadline ? new Date(opportunity.deadline).toLocaleDateString() : 'No deadline'}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Trending & Activity */}
+          <div className="space-y-8">
+            
+            {/* Trending Skills */}
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-blue-600" />
+                  Trending Skills
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {trendingSkills.slice(0, 6).map((skill, index) => (
+                  <div key={skill.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-slate-900">{skill.name}</p>
+                      <p className="text-xs text-slate-500">{skill.category}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center gap-1 text-green-600">
+                        <TrendingUp className="w-3 h-3" />
+                        <span className="text-sm font-medium">+{skill.growth_percentage}%</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Profile Completion */}
+            <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-blue-600" />
+                  Profile Strength
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-slate-700">Overall Score</span>
+                  <span className="text-sm font-bold text-slate-900">85%</span>
+                </div>
+                <Progress value={85} className="h-2" />
+                
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-slate-600">Skills Added</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-slate-600">Resume Uploaded</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-slate-600">Career Goals Set</span>
+                  </div>
+                </div>
+                
+                <Link to={createPageUrl("Profile")} className="block">
+                  <Button variant="outline" size="sm" className="w-full mt-3">
+                    Improve Profile
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <RecentActivity />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

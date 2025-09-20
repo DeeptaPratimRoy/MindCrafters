@@ -1,0 +1,69 @@
+{
+  "name": "CareerPath",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Career path title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Career path description"
+    },
+    "required_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Skills required for this career"
+    },
+    "future_proof_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "description": "Future-proof score (0-100)"
+    },
+    "automation_risk": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "description": "Risk of automation"
+    },
+    "demand_growth": {
+      "type": "string",
+      "enum": [
+        "declining",
+        "stable",
+        "growing",
+        "high_growth"
+      ],
+      "description": "Predicted demand growth"
+    },
+    "salary_range": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "number"
+        },
+        "max": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string",
+          "default": "USD"
+        }
+      }
+    },
+    "category": {
+      "type": "string",
+      "description": "Career category"
+    }
+  },
+  "required": [
+    "title",
+    "future_proof_score"
+  ]
+}

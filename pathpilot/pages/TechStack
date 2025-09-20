@@ -1,0 +1,84 @@
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Layers, Database, Palette, Server, Wind, Bot, Component, Route } from 'lucide-react';
+
+export default function TechStack() {
+  const stack = [
+    {
+      category: 'Frontend',
+      icon: Component,
+      color: 'text-blue-500',
+      items: [
+        { name: 'React', description: 'The core library for building the user interface.' },
+        { name: 'React Router', description: 'For handling navigation and routing between pages.' },
+        { name: 'Framer Motion', description: 'Used for smooth animations and transitions.' },
+      ],
+    },
+    {
+      category: 'UI & Styling',
+      icon: Palette,
+      color: 'text-sky-500',
+      items: [
+        { name: 'Tailwind CSS', description: 'A utility-first CSS framework for rapid styling.' },
+        { name: 'shadcn/ui', description: 'A collection of beautifully designed, reusable UI components.' },
+        { name: 'Lucide React', description: 'Provides the clean and modern icon set used throughout the app.' },
+      ],
+    },
+    {
+      category: 'Backend & Platform',
+      icon: Server,
+      color: 'text-indigo-500',
+      items: [
+        { name: 'base44 Platform', description: 'The underlying serverless platform that handles the database, authentication, and business logic.' },
+        { name: 'Entities SDK', description: 'Provides a simple way to interact with the database for creating, reading, and updating data.' },
+        { name: 'Core Integrations', description: 'Pre-built modules for services like sending emails and uploading files.' },
+      ],
+    },
+     {
+      category: 'AI & Data',
+      icon: Bot,
+      color: 'text-purple-500',
+      items: [
+        { name: 'AI Integrations', description: 'Leverages AI models for generating insights and recommendations within the base44 platform.' },
+        { name: 'Recharts', description: 'Used for creating the interactive charts in the Industry Pulse dashboard.' },
+      ],
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+            Our Technology Stack
+          </h1>
+          <p className="text-xl text-slate-600">
+            The modern technologies used to power PathPilot.
+          </p>
+        </div>
+
+        <div className="space-y-8">
+          {stack.map((category) => (
+            <Card key={category.category} className="border-0 shadow-lg bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-3 text-2xl font-bold text-slate-800">
+                  <category.icon className={`w-7 h-7 ${category.color}`} />
+                  {category.category}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {category.items.map((item) => (
+                  <div key={item.name} className="p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                    <h3 className="font-semibold text-slate-900 text-lg">{item.name}</h3>
+                    <p className="text-slate-600">{item.description}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

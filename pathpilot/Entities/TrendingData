@@ -1,0 +1,36 @@
+{
+  "name": "TrendingData",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "skill",
+        "role",
+        "company"
+      ],
+      "description": "Type of trending data"
+    },
+    "name": {
+      "type": "string",
+      "description": "Name of the trending item"
+    },
+    "growth_percentage": {
+      "type": "number",
+      "description": "Growth percentage"
+    },
+    "category": {
+      "type": "string",
+      "description": "Category (tech, business, creative, etc.)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description"
+    }
+  },
+  "required": [
+    "type",
+    "name",
+    "growth_percentage"
+  ]
+}

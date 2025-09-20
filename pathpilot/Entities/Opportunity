@@ -1,0 +1,63 @@
+{
+  "name": "Opportunity",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Opportunity title"
+    },
+    "company": {
+      "type": "string",
+      "description": "Company or organization"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "internship",
+        "hackathon",
+        "open_source",
+        "freelance",
+        "competition"
+      ],
+      "description": "Type of opportunity"
+    },
+    "description": {
+      "type": "string",
+      "description": "Opportunity description"
+    },
+    "required_skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Required skills"
+    },
+    "location": {
+      "type": "string",
+      "description": "Location (Remote, City, etc.)"
+    },
+    "duration": {
+      "type": "string",
+      "description": "Duration of opportunity"
+    },
+    "deadline": {
+      "type": "string",
+      "format": "date",
+      "description": "Application deadline"
+    },
+    "url": {
+      "type": "string",
+      "description": "Application or details URL"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a featured opportunity"
+    }
+  },
+  "required": [
+    "title",
+    "company",
+    "type"
+  ]
+}

@@ -1,0 +1,71 @@
+import React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Activity,
+  CheckCircle,
+  TrendingUp,
+  Brain,
+  Target
+} from "lucide-react";
+
+export default function RecentActivity() {
+  const activities = [
+    {
+      type: "skill_added",
+      icon: Brain,
+      title: "Added React to skills",
+      time: "2 hours ago",
+      color: "text-blue-600"
+    },
+    {
+      type: "profile_updated",
+      icon: CheckCircle,
+      title: "Profile completed",
+      time: "1 day ago", 
+      color: "text-green-600"
+    },
+    {
+      type: "career_explored",
+      icon: Target,
+      title: "Explored Software Engineer path",
+      time: "2 days ago",
+      color: "text-purple-600"
+    },
+    {
+      type: "trend_viewed",
+      icon: TrendingUp,
+      title: "Viewed trending skills",
+      time: "3 days ago",
+      color: "text-orange-600"
+    }
+  ];
+
+  return (
+    <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <Activity className="w-5 h-5 text-blue-600" />
+          Recent Activity
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {activities.map((activity, index) => (
+          <div key={index} className="flex items-start gap-3">
+            <div className={`w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center`}>
+              <activity.icon className={`w-4 h-4 ${activity.color}`} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-slate-900 text-sm">
+                {activity.title}
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                {activity.time}
+              </p>
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}

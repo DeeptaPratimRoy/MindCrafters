@@ -1,0 +1,321 @@
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { 
+  Mail, 
+  MapPin, 
+  Phone, 
+  Clock,
+  Send,
+  CheckCircle,
+  MessageCircle,
+  Users,
+  HelpCircle
+} from "lucide-react";
+import { SendEmail } from "@/integrations/Core";
+
+export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await SendEmail({
+        to: "support@pathpilot.ai",
+        subject: `Contact Form: ${formData.subject}`,
+        body: `
+Name: ${formData.name}
+Email: ${formData.email}
+Subject: ${formData.subject}
+
+Message:
+${formData.message}
+        `
+      });
+      setSubmitted(true);
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      setError("Failed to send message. Please try again.");
+    }
+    setIsSubmitting(false);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const contactInfo = [
+    {
+      icon: Mail,
+      title: "Email Us",
+      details: "support@pathpilot.ai",
+      description: "Send us an email and we'll respond within 24 hours"
+    },
+    {
+      icon: MapPin,
+      title: "Office Location",
+      details: "San Francisco, CA",
+      description: "Visit us at our headquarters in the heart of Silicon Valley"
+    },
+    {
+      icon: Phone,
+      title: "Phone Support",
+      details: "+1 (555) 123-4567",
+      description: "Call us Monday-Friday, 9 AM - 6 PM PST"
+    },
+    {
+      icon: Clock,
+      title: "Response Time",
+      details: "< 24 hours",
+      description: "We typically respond to all inquiries within one business day"
+    }
+  ];
+
+  const faqs = [
+    {
+      question: "How does PathPilot's AI career advisor work?",
+      answer: "Our AI analyzes your skills, interests, and market trends to provide personalized career recommendations and identify skill gaps."
+    },
+    {
+      question: "Is PathPilot free for students?",
+      answer: "Yes! PathPilot offers a comprehensive free tier with access to core features including skill mapping and career recommendations."
+    },
+    {
+      question: "How often is the job market data updated?",
+      answer: "Our industry data is updated weekly, ensuring you always have access to the latest market trends and opportunities."
+    }
+  ];
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-indigo-600/5 to-purple-600/10" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              Get in Touch
+            </h1>
+            <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
+              Have questions about PathPilot? Want to share feedback? We'd love to hear from you. 
+              Our team is here to help you navigate your career journey.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Form & Info */}
+      <section className="py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16">
+            {/* Contact Form */}
+            <div>
+              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+                    <MessageCircle className="w-6 h-6 text-blue-600" />
+                    Send us a Message
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {submitted ? (
+                    <Alert className="border-green-200 bg-green-50">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <AlertDescription className="text-green-800">
+                        Thank you for your message! We'll get back to you within 24 hours.
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      {error && (
+                        <Alert variant="destructive">
+                          <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                      )}
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-sm font-medium text-slate-700 block mb-2">
+                            Full Name
+                          </label>
+                          <Input
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="Your full name"
+                            required
+                            className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-sm font-medium text-slate-700 block mb-2">
+                            Email Address
+                          </label>
+                          <Input
+                            type="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="your@email.com"
+                            required
+                            className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-slate-700 block mb-2">
+                          Subject
+                        </label>
+                        <Input
+                          name="subject"
+                          value={formData.subject}
+                          onChange={handleChange}
+                          placeholder="What's this about?"
+                          required
+                          className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-slate-700 block mb-2">
+                          Message
+                        </label>
+                        <Textarea
+                          name="message"
+                          value={formData.message}
+                          onChange={handleChange}
+                          placeholder="Tell us how we can help..."
+                          rows={6}
+                          required
+                          className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 py-3"
+                      >
+                        {isSubmitting ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Sending...
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Send className="w-4 h-4" />
+                            Send Message
+                          </div>
+                        )}
+                      </Button>
+                    </form>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Contact Information */}
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 mb-6">
+                  Contact Information
+                </h2>
+                <div className="space-y-6">
+                  {contactInfo.map((info, index) => (
+                    <div key={index} className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                        <info.icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-slate-900 mb-1">{info.title}</h3>
+                        <p className="text-blue-600 font-medium mb-1">{info.details}</p>
+                        <p className="text-slate-600 text-sm">{info.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-xl text-slate-600">
+              Quick answers to common questions about PathPilot
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {faqs.map((faq, index) => (
+              <Card key={index} className="border-0 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-3 mb-4">
+                    <HelpCircle className="w-6 h-6 text-blue-600 mt-1" />
+                    <h3 className="font-semibold text-slate-900">{faq.question}</h3>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Support Section */}
+      <section className="py-24 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Users className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            We're Here to Help
+          </h2>
+          <p className="text-xl text-blue-100 leading-relaxed mb-8">
+            Our dedicated support team is committed to helping you succeed. Whether you're a student 
+            looking for career guidance or an educator interested in PathPilot for your institution, 
+            we're here to support your journey.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+              ✓ 24/7 Help Center
+            </div>
+            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+              ✓ Live Chat Support
+            </div>
+            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+              ✓ Video Tutorials
+            </div>
+            <div className="bg-white/10 rounded-lg px-4 py-2 text-white">
+              ✓ Community Forums
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

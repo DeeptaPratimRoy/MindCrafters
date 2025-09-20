@@ -1,0 +1,276 @@
+
+import React from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button"; // Added Button import
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { 
+  Brain, 
+  Users, 
+  Rocket, 
+  Shield, 
+  Award,
+  TrendingUp,
+  Globe,
+  Heart,
+  Layers, // Added Layers icon
+  ArrowRight // Added ArrowRight icon
+} from "lucide-react";
+
+export default function About() {
+  const values = [
+    {
+      icon: Brain,
+      title: "AI-Powered Intelligence",
+      description: "We leverage cutting-edge AI to analyze market trends and provide personalized career guidance."
+    },
+    {
+      icon: Users,
+      title: "Student-Centric Design",
+      description: "Every feature is designed with students in mind, making career planning accessible and engaging."
+    },
+    {
+      icon: Rocket,
+      title: "Future-Focused",
+      description: "We help you prepare for jobs that don't exist yet by identifying emerging trends and skills."
+    },
+    {
+      icon: Shield,
+      title: "Data-Driven Accuracy",
+      description: "Our recommendations are backed by real industry data and predictive analytics."
+    }
+  ];
+
+  const team = [
+    {
+      name: "Sarah Chen",
+      role: "CEO & Co-founder",
+      bio: "Former Google AI researcher with a passion for education technology.",
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      name: "Marcus Rodriguez",
+      role: "CTO & Co-founder", 
+      bio: "Ex-Microsoft engineer specializing in machine learning and career analytics.",
+      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      name: "Dr. Emily Watson",
+      role: "Head of Data Science",
+      bio: "PhD in Applied Statistics with 10+ years in workforce analytics.",
+      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+    },
+    {
+      name: "David Kim",
+      role: "Head of Product",
+      bio: "Former product leader at LinkedIn, expert in career development platforms.",
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+    }
+  ];
+
+  return (
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden py-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-indigo-600/5 to-purple-600/10" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
+              Empowering the Next Generation of 
+              <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Career Leaders
+              </span>
+            </h1>
+            <p className="text-xl text-slate-600 mb-8 max-w-3xl mx-auto">
+              PathPilot was born from a simple belief: every student deserves personalized guidance 
+              to navigate their career journey in an rapidly evolving job market.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="py-16 bg-white/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+                Our Mission
+              </h2>
+              <p className="text-lg text-slate-600 mb-6 leading-relaxed">
+                We're on a mission to democratize career guidance by making AI-powered insights 
+                accessible to every student, regardless of their background or resources.
+              </p>
+              <p className="text-lg text-slate-600 leading-relaxed">
+                The job market is changing faster than ever. Traditional career counseling can't keep up. 
+                That's why we built PathPilot – to bridge the gap between education and the evolving 
+                demands of tomorrow's workforce.
+              </p>
+            </div>
+            <div className="relative">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="h-32 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl" />
+                  <div className="h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl" />
+                </div>
+                <div className="space-y-4 pt-8">
+                  <div className="h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl" />
+                  <div className="h-32 bg-gradient-to-br from-pink-500 to-rose-600 rounded-xl" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Values Section */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              What Drives Us
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Our core values shape every decision we make and every feature we build
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((value, index) => (
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <value.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-3">
+                    {value.title}
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">
+                    {value.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Impact Section */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Making a Real Impact
+            </h2>
+            <p className="text-xl text-slate-600">
+              See how PathPilot is transforming career guidance
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: TrendingUp,
+                stat: "85%",
+                label: "Career Clarity Improvement",
+                desc: "Students report significantly better understanding of their career path"
+              },
+              {
+                icon: Globe,
+                stat: "120+",
+                label: "Countries Reached",
+                desc: "PathPilot is helping students worldwide discover their potential"
+              },
+              {
+                icon: Heart,
+                stat: "98%",
+                label: "Student Satisfaction",
+                desc: "Consistently high ratings from students using our platform"
+              }
+            ].map((item, index) => (
+              <div key={index} className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <item.icon className="w-8 h-8 text-white" />
+                </div>
+                <div className="text-4xl font-bold text-slate-900 mb-2">{item.stat}</div>
+                <div className="text-lg font-semibold text-slate-900 mb-2">{item.label}</div>
+                <p className="text-slate-600">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+              Meet Our Team
+            </h2>
+            <p className="text-xl text-slate-600">
+              The brilliant minds behind PathPilot's innovation
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {team.map((member, index) => (
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-0 bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-6 text-center">
+                  <img 
+                    src={member.image}
+                    alt={member.name}
+                    className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
+                  />
+                  <h3 className="text-xl font-semibold text-slate-900 mb-1">
+                    {member.name}
+                  </h3>
+                  <p className="text-blue-600 font-medium mb-3">{member.role}</p>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    {member.bio}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tech Stack Section */}
+      <section className="py-24 bg-slate-50">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <Layers className="w-8 h-8 text-white" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
+            Powered by Modern Technology
+          </h2>
+          <p className="text-xl text-slate-600 mb-8">
+            PathPilot is built on a robust, scalable, and modern tech stack to deliver a seamless and intelligent user experience.
+          </p>
+          <Link to={createPageUrl("TechStack")}>
+            <Button size="lg">
+              View Our Tech Stack
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Vision Section */}
+      <section className="py-24 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Building the Future of Career Guidance
+          </h2>
+          <p className="text-xl text-blue-100 leading-relaxed">
+            We envision a world where every student has access to personalized, AI-powered career guidance 
+            that adapts to the rapidly changing job market. Our platform will continue to evolve, 
+            incorporating the latest advancements in AI and data science to provide even more accurate 
+            and helpful insights for your career journey.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
